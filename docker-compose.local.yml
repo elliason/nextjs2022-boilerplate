@@ -1,0 +1,99 @@
+version: '3.9'
+
+networks:
+    default:
+        external: true
+        name: ${DOCKER_NETWORK}
+    intnet:
+        external: false
+        driver: bridge
+
+volumes:
+    mysql-wp:
+        name: ${APP_ID}-mysql-wp
+
+services:
+    nginx:
+        image: eldy/nginx:alpine
+        container_name: '${APP_ID}-nginx'
+        labels:
+            - 'traefik.enable=true'
+            - 'traefik.docker.network=${DOCKER_NETWORK}'
+            - 'traefik.http.routers.${APP_ID}-nginx.rule=Host(`wp.${APP_HOST}`)'
+            - 'traefik.http.routers.${APP_ID}-nginx.entrypoints=https'
+            - 'traefik.http.routers.${APP_ID}-nginx.tls=true'
+            - 'traefik.http.services.${APP_ID}-nginx.loadbalancer.server.port=8080'
+        volumes:
+            - ./application/wordpress/bedrock:/app
+            - ./application/wordpress/theme:/app/web/app/themes/headless
+            - ./extras/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./logs/nginx:/var/log/nginx
+        command: "nginx -g 'daemon off;'"
+        networks:
+            - default
+            - intnet
+        depends_on:
+            - php
+            - mysql
+        extra_hosts:
+            - ${APP_HOST}:${DOCKER_NETWORK_GATEWAY}
+
+    php:
+        image: ${PHP_DOCKER_IMAGE}
+        container_name: '${APP_ID}-php'
+        volumes:
+            - ./application/wordpress/bedrock:/app
+            - ./application/wordpress/theme:/app/web/app/themes/headless
+            - ./extras/php/conf.d/local.ini:/usr/local/etc/php/conf.d/local.ini:ro
+            - ./extras/php/php-fpm.d/local.conf:/usr/local/etc/php-fpm.d/local.conf:ro
+        networks:
+            - intnet
+        labels:
+            - 'traefik.enable=false'
+        links:
+            - 'mysql:db'
+        depends_on:
+            - mysql
+        environment:
+            - 'APP_ENV=${ENVIRONMENT_TYPE}'
+            - 'DB_HOST=db:3306'
+            - 'DB_NAME=${MYSQL_DATABASE}'
+            - 'DB_USER=${MYSQL_USER}'
+            - 'DB_PASSWORD=${MYSQL_PASSWORD}'
+            - 'WP_HOME=https://wp.${APP_HOST}'
+            - 'WP_ENV=${WP_ENV}'
+            - 'HEADLESS_FRONTEND_URL=https://${APP_HOST}'
+        extra_hosts:
+            - ${APP_HOST}:${DOCKER_NETWORK_GATEWAY}
+
+    mysql:
+        image: mysql
+        container_name: '${APP_ID}-db'
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        ports:
+            - '3306'
+        networks:
+            - intnet
+        labels:
+            - 'traefik.enable=false'
+        volumes:
+            - mysql-wp:/var/lib/mysql
+
+    adminer:
+        image: adminer
+        container_name: '${APP_ID}-adminer'
+        labels:
+            - 'traefik.enable=true'
+            - 'traefik.docker.network=${DOCKER_NETWORK}'
+            - 'traefik.http.routers.${APP_ID}-adminer.rule=Host(`adminer.${APP_HOST}`)'
+            - 'traefik.http.routers.${APP_ID}-adminer.entrypoints=https'
+            - 'traefik.http.routers.${APP_ID}-adminer.tls=true'
+        links:
+            - 'mysql:db'
+        networks:
+            - default
+            - intnet

@@ -1,0 +1,15 @@
+{
+    "name": "bedrock-platypus-template",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "commander": "^8.2",
+        "platypus-tools": "^0",
+        "shelljs": "^0.8"
+    },
+    "devDependencies": {
+        "prettier": "^2",
+        "typescript": "^4"
+    }
+}
