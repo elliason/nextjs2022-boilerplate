@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+scriptPath="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+rootPath="$(dirname "${scriptPath}")"
+
+if [[ ! -f "$rootPath/.env" ]]; then
+    echo "File .env not found"
+    echo
+    exit 1
+fi
+
+RUNENV=$1
+
+if [[ -z "$RUNENV" ]]; then
+    RUNENV=$(grep RUNENV "$rootPath/.env" | cut -d '=' -f2)
+fi
+
+if [[ ! -f "$rootPath/docker-compose.$RUNENV.yaml" ]]; then
+    echo "File docker-compose.$RUNENV.yaml not found."
+    echo
+    exit 1
+fi
+
+if [[ -z "$DOCKER_HOST_MACHINE_IP" ]]; then
+    export DOCKER_HOST_MACHINE_IP="$(docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' webapp)"
+fi
+
+ARGS="-f $rootPath/docker-compose.$RUNENV.yaml"
+
+#docker-compose ${ARGS} pull
+docker-compose ${ARGS} up -d

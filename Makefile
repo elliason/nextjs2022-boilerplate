@@ -6,21 +6,22 @@ wpplugin ?= $(shell bash -c 'read -p "Plugin: " plugin; echo $$plugin')
 wppackage ?= $(shell bash -c 'read -p "Package: " package; echo $$package')
 
 init:
-	yarn install && chmod +x -R ./cli;
+	chmod +x -R ./cli;
+	cd application && yarn install;
 	docker run -it --rm -v `pwd`/application/wordpress/bedrock:/app -w /app -u $(CURRENT_UID) $(PHP_DOCKER_IMAGE) bash -c "composer install";
 	cd application/wordpress/bedrock && cp .env.example .env;
 
 start:
-	./cli/start.js;
-
-start-pull:
-	./cli/start.js -p;
+	./cli/start;
 
 stop:
-	./cli/stop.js;
+	./cli/stop;
 
 restart:
-	./cli/restart.js;
+	./cli/restart;
+
+run-container-node:
+	docker run -it --rm -v `pwd`/:/app -w /app -u $(CURRENT_UID) $(NODE_DOCKER_IMAGE) bash;
 
 run-container-php:
 	docker run -it --rm -v `pwd`/application/wordpress/bedrock:/app -w /app -u $(CURRENT_UID) $(PHP_DOCKER_IMAGE) bash;

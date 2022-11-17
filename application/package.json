@@ -1,0 +1,45 @@
+{
+    "name": "nextjs-template",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "workspaces" : ["nextjs", "storybook"],
+    "scripts" : {
+        "eslint:fix": "eslint . --quiet --ext .ts,.tsx,.js,.jsx,.jsm --fix",
+        "eslint:lint": "eslint . --ext .ts,.tsx,.js,.jsx,.jsm",
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,css,scss,less,json,cjs,mjs}\"",
+        "clear-modules": "find . -name \"node_modules\" -type d -exec rm -rf '{}' +",
+        "sort-package-json": "npx sort-package-json \"**/package.json\"",
+        "stylelint:fix": "stylelint \"**/*.{css,scss,sass}\" --fix --quiet",
+        "stylelint:lint": "stylelint \"**/*.{css,scss,sass}\"",
+        "typescript:check": "tsc --pretty --noEmit",
+        "lint": "yarn eslint:lint && yarn stylelint:lint && yarn typescript:check",
+        "lint:fix": "yarn eslint:fix && yarn stylelint:fix",
+        "test": "cd nextjs && yarn test"
+    },
+    "dependencies": {
+        "commander": "^8.2",
+        "platypus-tools": "^0",
+        "shelljs": "^0.8"
+    },
+    "devDependencies": {
+        "@media-factory-cz/eslint-config": "^1.0.1",
+        "@media-factory-cz/prettier-config": "^1.0.2",
+        "@media-factory-cz/stylelint-config": "^1.0.4",
+        "@media-factory-cz/typescript-config": "^1.0.4",
+        "@types/node": "^18.11.9",
+        "@typescript-eslint/eslint-plugin": "^5.43.0",
+        "@typescript-eslint/parser": "^5.43.0",
+        "eslint": "^8.27.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-react": "^7.31.10",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "postcss": "^8.4.19",
+        "prettier": "^2.7.1",
+        "stylelint": "^14.15.0",
+        "stylelint-config-prettier": "^9.0.4",
+        "stylelint-config-standard-scss": "^6.1.0",
+        "typescript": "^4"
+    }
+}

@@ -13,6 +13,23 @@ volumes:
         name: ${APP_ID}-mysql-wp
 
 services:
+    next:
+        image: ${NODE_DOCKER_IMAGE}
+        container_name: "${APP_ID}-web"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=${DOCKER_NETWORK}"
+            - "traefik.http.routers.${APP_ID}-public.rule=Host(`${APP_HOST}`)"
+            - "traefik.http.routers.${APP_ID}-public.entrypoints=https"
+            - "traefik.http.routers.${APP_ID}-public.tls=true"
+            - "traefik.http.services.${APP_ID}-public.loadbalancer.server.port=3000"
+        volumes:
+            - ./application:/app
+        working_dir: /app/nextjs
+        command: "yarn dev"
+        networks:
+            - default
+
     nginx:
         image: eldy/nginx:alpine
         container_name: '${APP_ID}-nginx'
@@ -36,7 +53,7 @@ services:
             - php
             - mysql
         extra_hosts:
-            - ${APP_HOST}:${DOCKER_NETWORK_GATEWAY}
+            - ${APP_HOST}:${DOCKER_HOST_MACHINE_IP}
 
     php:
         image: ${PHP_DOCKER_IMAGE}
@@ -64,7 +81,7 @@ services:
             - 'WP_ENV=${WP_ENV}'
             - 'HEADLESS_FRONTEND_URL=https://${APP_HOST}'
         extra_hosts:
-            - ${APP_HOST}:${DOCKER_NETWORK_GATEWAY}
+            - ${APP_HOST}:${DOCKER_HOST_MACHINE_IP}
 
     mysql:
         image: mysql
@@ -97,3 +114,21 @@ services:
         networks:
             - default
             - intnet
+
+    storybook:
+        image: ${NODE_DOCKER_IMAGE}
+        container_name: "${APP_ID}-storybook"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=${DOCKER_NETWORK}"
+            - "traefik.http.routers.${APP_ID}-storybook.rule=Host(`storybook.${APP_HOST}`)"
+            - "traefik.http.routers.${APP_ID}-storybook.entrypoints=https"
+            - "traefik.http.routers.${APP_ID}-storybook.tls=true"
+            - "traefik.http.services.${APP_ID}-storybook.loadbalancer.server.port=6006"
+        volumes:
+            - ./application:/app
+        working_dir: /app/storybook
+        command: "yarn storybook"
+        networks:
+            - default
+

@@ -1,4 +1,4 @@
-# Platypus project
+# Nextjs boilerplate
 
 ## Setup
 
