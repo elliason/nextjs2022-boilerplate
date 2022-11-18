@@ -7,7 +7,7 @@
     "scripts" : {
         "eslint:fix": "eslint . --quiet --ext .ts,.tsx,.js,.jsx,.jsm --fix",
         "eslint:lint": "eslint . --ext .ts,.tsx,.js,.jsx,.jsm",
-        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,css,scss,less,json,cjs,mjs}\"",
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,cjs,mjs,css,scss,less,json,yml,yaml.md,mdx}\"",
         "clear-modules": "find . -name \"node_modules\" -type d -exec rm -rf '{}' +",
         "sort-package-json": "npx sort-package-json \"**/package.json\"",
         "stylelint:fix": "stylelint \"**/*.{css,scss,sass}\" --fix --quiet",
