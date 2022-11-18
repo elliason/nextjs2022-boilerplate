@@ -8,3 +8,5 @@ yarn-error.log
 extras/certs/*
 !extras/certs/.gitkeep
 vendor
+.vscode
+

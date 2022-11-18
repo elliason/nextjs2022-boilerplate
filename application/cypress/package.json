@@ -1,0 +1,17 @@
+{
+    "name": "nextjs-cypress",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "cypress:open": "cypress open",
+        "cypress:run": "cypress run"
+    },
+    "devDependencies": {
+        "cypress": "^11.1.0",
+        "eslint": "^8.27.0",
+        "eslint-plugin-cypress": "^2.12.1",
+        "typescript": "^4.9.3"
+    }
+}

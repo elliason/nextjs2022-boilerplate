@@ -10,6 +10,7 @@ init:
 	cd application && yarn install;
 	docker run -it --rm -v `pwd`/application/wordpress/bedrock:/app -w /app -u $(CURRENT_UID) $(PHP_DOCKER_IMAGE) bash -c "composer install";
 	cd application/wordpress/bedrock && cp .env.example .env;
+	cd application/cypress && yarn install;
 
 start:
 	./cli/start;
@@ -21,7 +22,7 @@ restart:
 	./cli/restart;
 
 run-container-node:
-	docker run -it --rm -v `pwd`/:/app -w /app -u $(CURRENT_UID) $(NODE_DOCKER_IMAGE) bash;
+	docker run -it --rm -v `pwd`/application:/app -w /app -u $(CURRENT_UID) $(NODE_DOCKER_IMAGE) bash;
 
 run-container-php:
 	docker run -it --rm -v `pwd`/application/wordpress/bedrock:/app -w /app -u $(CURRENT_UID) $(PHP_DOCKER_IMAGE) bash;
@@ -31,4 +32,10 @@ add-wp-plugin:
 
 add-wp-package:
 	docker run -it --rm -v `pwd`/application/wordpress/bedrock:/app -w /app -u $(CURRENT_UID) $(PHP_DOCKER_IMAGE) bash -c "composer require $(wppackage)";
+
+test-e2e-open:
+	cd application/cypress && yarn cypress:open;
+
+test-e2e-run:
+	cd application/cypress && yarn cypress:run;
 
