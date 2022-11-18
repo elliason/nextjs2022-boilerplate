@@ -3,8 +3,11 @@
     "version": "1.0.0",
     "private": true,
     "type": "module",
-    "workspaces" : ["nextjs", "storybook"],
-    "scripts" : {
+    "workspaces": [
+        "nextjs",
+        "storybook"
+    ],
+    "scripts": {
         "eslint:fix": "eslint . --quiet --ext .ts,.tsx,.js,.jsx,.jsm --fix",
         "eslint:lint": "eslint . --ext .ts,.tsx,.js,.jsx,.jsm",
         "format": "prettier --write \"**/*.{ts,tsx,js,jsx,cjs,mjs,css,scss,less,json,yml,yaml.md,mdx}\"",
